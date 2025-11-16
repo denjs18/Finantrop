@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Gestion Finance",
   description: "Application de gestion de budget et d'investissements personnels",
