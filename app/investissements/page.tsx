@@ -87,7 +87,7 @@ export default function InvestissementsPage() {
       toast({
         variant: 'destructive',
         title: 'Erreur',
-        description: 'Veuillez spécifier le nom de l\'action',
+        description: 'Veuillez spécifier le nom de l&apos;action',
       })
       return
     }
@@ -127,7 +127,7 @@ export default function InvestissementsPage() {
       toast({
         variant: 'destructive',
         title: 'Erreur',
-        description: 'Impossible d\'ajouter la transaction',
+        description: 'Impossible d&apos;ajouter la transaction',
       })
     }
   }
@@ -187,7 +187,7 @@ export default function InvestissementsPage() {
             <DialogHeader>
               <DialogTitle>Nouvelle transaction</DialogTitle>
               <DialogDescription>
-                Enregistrez un achat ou une vente d'action
+                Enregistrez un achat ou une vente d&apos;action
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleSubmit}>
@@ -229,7 +229,7 @@ export default function InvestissementsPage() {
                 </div>
                 {formData.action === 'Autre' && (
                   <div>
-                    <Label htmlFor="autreAction">Nom de l'action</Label>
+                    <Label htmlFor="autreAction">Nom de l&apos;action</Label>
                     <Input
                       id="autreAction"
                       type="text"

@@ -45,6 +45,7 @@ export default function BudgetPage() {
   useEffect(() => {
     fetchDepenses()
     fetchSettings()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth, selectedYear])
 
   const fetchSettings = async () => {

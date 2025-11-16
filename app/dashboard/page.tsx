@@ -103,7 +103,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground mt-1">
-            Vue d'ensemble de votre situation financière
+            Vue d&apos;ensemble de votre situation financière
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="livrets">Total livrets d'épargne (€)</Label>
+                  <Label htmlFor="livrets">Total livrets d&apos;épargne (€)</Label>
                   <Input
                     id="livrets"
                     type="number"

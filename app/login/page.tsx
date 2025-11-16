@@ -95,7 +95,7 @@ export default function LoginPage() {
             <p className="text-sm text-center text-muted-foreground">
               Pas encore de compte ?{' '}
               <Link href="/register" className="text-primary hover:underline">
-                S'inscrire
+                S&apos;inscrire
               </Link>
             </p>
           </CardFooter>
