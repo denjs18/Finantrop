@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 import dbConnect from '@/lib/db/mongodb'
 import User from '@/lib/db/models/User'
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
