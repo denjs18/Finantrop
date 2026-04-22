@@ -1,31 +1,52 @@
 import logging
 import time
+import urllib.parse
+import xml.etree.ElementTree as ET
 from typing import Optional
-import feedparser
+import requests
 import anthropic
 from config import ANTHROPIC_API_KEY
 
 logger = logging.getLogger(__name__)
 
+_HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; StockAnalyzer/1.0)"}
+
+
+def _parse_rss(xml_text: str) -> list[dict]:
+    """Parse RSS XML, return list of {title, summary, link, published}."""
+    articles = []
+    try:
+        root = ET.fromstring(xml_text)
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        for item in root.iter("item"):
+            title = (item.findtext("title") or "").strip()
+            link = (item.findtext("link") or "").strip()
+            summary = (item.findtext("description") or "")[:300].strip()
+            published = (item.findtext("pubDate") or "").strip()
+            if title:
+                articles.append({"title": title, "link": link,
+                                  "summary": summary, "published": published})
+    except ET.ParseError as e:
+        logger.warning(f"RSS XML parse error: {e}")
+    return articles
+
 
 def _fetch_articles(company_name: str, ticker: str, max_articles: int = 20) -> list[dict]:
-    """Scrape Google News RSS for a company."""
+    """Fetch recent news articles via Google News RSS."""
     articles = []
     queries = [
-        f"{company_name} stock action bourse",
-        f"{ticker} finance résultats",
+        f"{company_name} bourse résultats",
+        f"{ticker} action finance",
     ]
+    per_query = max(1, max_articles // len(queries))
     for query in queries:
         try:
-            url = f"https://news.google.com/rss/search?q={query.replace(' ', '+')}&hl=fr&gl=FR&ceid=FR:fr"
-            feed = feedparser.parse(url)
-            for entry in feed.entries[:max_articles // len(queries)]:
-                articles.append({
-                    "title": entry.get("title", ""),
-                    "summary": entry.get("summary", "")[:300],
-                    "published": entry.get("published", ""),
-                    "link": entry.get("link", ""),
-                })
+            encoded = urllib.parse.quote(query)
+            url = f"https://news.google.com/rss/search?q={encoded}&hl=fr&gl=FR&ceid=FR:fr"
+            resp = requests.get(url, headers=_HEADERS, timeout=8)
+            resp.raise_for_status()
+            parsed = _parse_rss(resp.text)
+            articles.extend(parsed[:per_query])
         except Exception as e:
             logger.warning(f"RSS fetch failed for '{query}': {e}")
     return articles[:max_articles]

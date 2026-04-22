@@ -27,8 +27,12 @@ def get_stock_data(ticker: str, period: str = "1y") -> Optional[pd.DataFrame]:
             logger.warning(f"No data returned for {ticker}")
             return None
         df = df[["Open", "High", "Low", "Close", "Volume"]].copy()
+        df.index = df.index.tz_localize(None) if df.index.tz else df.index
         df.index.name = "Date"
-        cache_set(cache_key, df.to_dict(), ttl_minutes=60)
+        # Convert index to str for JSON serialization
+        df_serializable = df.copy()
+        df_serializable.index = df_serializable.index.strftime("%Y-%m-%d")
+        cache_set(cache_key, df_serializable.to_dict(), ttl_minutes=60)
         return df
     except Exception as e:
         logger.error(f"Failed to fetch data for {ticker}: {e}")
