@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
       date: { $gte: startOfMonth, $lte: endOfMonth },
     })
 
-    const totalFraisMois = depensesMois.reduce((sum, d) => sum + d.montant, 0)
+    const totalFraisMois = depensesMois.reduce((sum: number, d: any) => sum + d.montant, 0)
 
     const last12Months = []
     for (let i = 11; i >= 0; i--) {
