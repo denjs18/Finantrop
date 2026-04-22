@@ -90,7 +90,7 @@ export async function PUT(req: NextRequest) {
       date: { $gte: startDate, $lte: endDate },
     })
 
-    const totalFrais = depenses.reduce((sum, d) => sum + d.montant, 0)
+    const totalFrais = depenses.reduce((sum: number, d: any) => sum + d.montant, 0)
 
     const settings = await Settings.findOne({ userId: session.user.id })
     const salaire = settings?.salaireMensuel || 0

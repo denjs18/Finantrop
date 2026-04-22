@@ -88,9 +88,9 @@ export async function GET(req: NextRequest) {
       const transactionsIndice = toutesTransactions.filter((t) => t.action === indice)
       const transactionsMois = achatsduMois.filter((t) => t.action === indice)
 
-      const quantiteTotale = transactionsIndice.reduce((s, t) => s + t.quantite, 0)
-      const investiTotal = transactionsIndice.reduce((s, t) => s + t.quantite * t.prix + t.frais, 0)
-      const investiCeMois = transactionsMois.reduce((s, t) => s + t.quantite * t.prix + t.frais, 0)
+      const quantiteTotale = transactionsIndice.reduce((s: number, t: any) => s + t.quantite, 0)
+      const investiTotal = transactionsIndice.reduce((s: number, t: any) => s + t.quantite * t.prix + t.frais, 0)
+      const investiCeMois = transactionsMois.reduce((s: number, t: any) => s + t.quantite * t.prix + t.frais, 0)
 
       const prixActuel = prixMap.get(indice) ?? null
       const valeurActuelle = prixActuel !== null ? quantiteTotale * prixActuel : null
