@@ -209,7 +209,7 @@ export default function InvestissementsPage() {
           </Button>
           {!isCurrentMois && (
             <Button variant="ghost" size="sm" onClick={() => setCurrentMois(today)}>
-              Aujourd'hui
+              Aujourd&apos;hui
             </Button>
           )}
         </div>
@@ -239,7 +239,7 @@ export default function InvestissementsPage() {
                   <DialogHeader>
                     <DialogTitle>Ajouter un achat</DialogTitle>
                     <DialogDescription>
-                      Enregistrez un achat d'indice pour {formatMoisLabel(currentMois)}
+                      Enregistrez un achat d&apos;indice pour {formatMoisLabel(currentMois)}
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleAddAchat}>
@@ -263,7 +263,7 @@ export default function InvestissementsPage() {
                       </div>
                       {achatForm.indiceSelect === AUTRE_OPTION && (
                         <div>
-                          <Label>Nom de l'indice</Label>
+                          <Label>Nom de l&apos;indice</Label>
                           <Input
                             value={achatForm.indiceLibre}
                             onChange={(e) => setAchatForm({ ...achatForm, indiceLibre: e.target.value })}
@@ -426,7 +426,7 @@ export default function InvestissementsPage() {
               <CardContent>
                 {moisData.hasMissingPrices && (
                   <div className="mb-4 px-3 py-2 rounded-md bg-yellow-50 dark:bg-yellow-950 text-yellow-800 dark:text-yellow-200 text-sm">
-                    Certains indices n'ont pas de prix pour ce mois. La valorisation est partielle.
+                    Certains indices n&apos;ont pas de prix pour ce mois. La valorisation est partielle.
                   </div>
                 )}
                 <div className="overflow-x-auto">
