@@ -16,7 +16,7 @@ interface ProjectionData {
 
 export default function ProjectionsPage() {
   const [settings, setSettings] = useState<any>(null)
-  const [portfolio, setPortfolio] = useState<any[]>([])
+  const [valeurActuelle, setValeurActuelle] = useState<number>(0)
   const [projections, setProjections] = useState<ProjectionData[]>([])
 
   useEffect(() => {
@@ -26,31 +26,24 @@ export default function ProjectionsPage() {
 
   const fetchData = async () => {
     try {
-      const [settingsRes, portfolioRes] = await Promise.all([
+      const [settingsRes, dashboardRes] = await Promise.all([
         fetch('/api/settings'),
-        fetch('/api/investissements/portfolio'),
+        fetch('/api/dashboard'),
       ])
 
-      if (settingsRes.ok) {
-        const data = await settingsRes.json()
-        setSettings(data)
-        calculateProjections(data, await portfolioRes.json())
-      }
-
-      if (portfolioRes.ok) {
-        const data = await portfolioRes.json()
-        setPortfolio(data)
+      if (settingsRes.ok && dashboardRes.ok) {
+        const settingsData = await settingsRes.json()
+        const dashboardData = await dashboardRes.json()
+        setSettings(settingsData)
+        setValeurActuelle(dashboardData.patrimoineTotal ?? 0)
+        calculateProjections(settingsData, dashboardData.patrimoineTotal ?? 0)
       }
     } catch (error) {
       console.error('Erreur:', error)
     }
   }
 
-  const calculateProjections = (settings: any, portfolio: any[]) => {
-    const valeurActuelle = portfolio.reduce((sum, item) => {
-      const prixActuel = item.prixActuel || item.prixMoyenAchat
-      return sum + (item.quantite * prixActuel)
-    }, 0)
+  const calculateProjections = (settings: any, valeurActuelle: number) => {
 
     const investissementMensuel = settings.investissementMoyen || 465
     const performanceMensuelle = (settings.performanceMoyenne || 0.97) / 100
@@ -131,12 +124,7 @@ export default function ProjectionsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatCurrency(
-                portfolio.reduce((sum, item) => {
-                  const prixActuel = item.prixActuel || item.prixMoyenAchat
-                  return sum + (item.quantite * prixActuel)
-                }, 0)
-              )}
+              {formatCurrency(valeurActuelle)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">
               Base de calcul

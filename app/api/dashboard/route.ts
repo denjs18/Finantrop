@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
+import mongoose from 'mongoose'
 import { authOptions } from '@/lib/auth'
 import dbConnect from '@/lib/db/mongodb'
-import Portfolio from '@/lib/db/models/Portfolio'
+import Transaction from '@/lib/db/models/Transaction'
+import PrixMensuel from '@/lib/db/models/PrixMensuel'
 import Settings from '@/lib/db/models/Settings'
 import Depense from '@/lib/db/models/Depense'
 import MoisRecap from '@/lib/db/models/MoisRecap'
@@ -17,29 +19,46 @@ export async function GET(req: NextRequest) {
 
     await dbConnect()
 
-    const [portfolio, settings] = await Promise.all([
-      Portfolio.find({ userId: session.user.id }),
-      Settings.findOne({ userId: session.user.id }),
+    const userId = new mongoose.Types.ObjectId(session.user.id)
+
+    const [transactions, settings] = await Promise.all([
+      Transaction.find({ userId, type: 'achat' }),
+      Settings.findOne({ userId }),
     ])
 
-    const valeurTotale = portfolio.reduce((sum, item) => {
-      const prixActuel = item.prixActuel || item.prixMoyenAchat
-      return sum + (item.quantite * prixActuel)
-    }, 0)
+    // Dernier prix connu par indice via agrégation
+    const derniersKonnus = await PrixMensuel.aggregate<{ _id: string; prix: number }>([
+      { $match: { userId } },
+      { $sort: { mois: -1 } },
+      { $group: { _id: '$indice', prix: { $first: '$prix' } } },
+    ])
+    const prixMap = new Map<string, number>(derniersKonnus.map((d) => [d._id, d.prix]))
 
-    const coutTotal = portfolio.reduce((sum, item) => {
-      return sum + (item.quantite * item.prixMoyenAchat) + item.fraisTotal
-    }, 0)
+    // Quantité totale par indice
+    const qtParIndice = new Map<string, number>()
+    const coutParIndice = new Map<string, number>()
+    for (const t of transactions) {
+      qtParIndice.set(t.action, (qtParIndice.get(t.action) ?? 0) + t.quantite)
+      coutParIndice.set(t.action, (coutParIndice.get(t.action) ?? 0) + t.quantite * t.prix + t.frais)
+    }
+
+    let valeurTotale = 0
+    let coutTotal = 0
+    for (const [indice, qt] of qtParIndice) {
+      const prix = prixMap.get(indice) ?? 0
+      valeurTotale += qt * prix
+      coutTotal += coutParIndice.get(indice) ?? 0
+    }
 
     const beneficeGlobal = valeurTotale - coutTotal
-    const performanceGlobale = coutTotal > 0 ? ((beneficeGlobal / coutTotal) * 100) : 0
+    const performanceGlobale = coutTotal > 0 ? (beneficeGlobal / coutTotal) * 100 : 0
 
     const now = new Date()
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
 
     const depensesMois = await Depense.find({
-      userId: session.user.id,
+      userId,
       date: { $gte: startOfMonth, $lte: endOfMonth },
     })
 
@@ -52,11 +71,7 @@ export async function GET(req: NextRequest) {
       const mois = date.getMonth() + 1
       const annee = date.getFullYear()
 
-      const recap = await MoisRecap.findOne({
-        userId: session.user.id,
-        mois,
-        annee,
-      })
+      const recap = await MoisRecap.findOne({ userId, mois, annee })
 
       last12Months.push({
         mois: date.toLocaleDateString('fr-FR', { month: 'short' }),

@@ -46,6 +46,44 @@ export interface PortfolioItem {
   prixActuel?: number
 }
 
+export interface Achat {
+  _id: string
+  userId: string
+  date: Date
+  indice: string
+  quantite: number
+  prix: number
+  frais: number
+}
+
+export interface PrixMensuel {
+  _id: string
+  userId: string
+  indice: string
+  mois: Date
+  prix: number
+}
+
+export interface RecapIndice {
+  indice: string
+  investiCeMois: number
+  investiTotal: number
+  quantiteTotale: number
+  prixActuel: number | null
+  valeurActuelle: number | null
+  performance: number | null
+}
+
+export interface RecapMois {
+  mois: string
+  achats: Achat[]
+  prix: PrixMensuel[]
+  recap: RecapIndice[]
+  totalInvestiCeMois: number
+  totalInvestiDepuisDebut: number
+  valeurTotale: number | null
+}
+
 export interface MoisRecap {
   _id?: string
   userId: string
