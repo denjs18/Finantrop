@@ -38,11 +38,11 @@ export async function GET(req: NextRequest) {
     await dbConnect()
 
     // Toutes les transactions achat jusqu'à la fin du mois
-    const toutesTransactions = await Transaction.find({
+    const toutesTransactions = (await Transaction.find({
       userId: userObjectId,
       type: 'achat',
       date: { $lt: fin },
-    }).sort({ date: 1 })
+    }).sort({ date: 1 })) as any[]
 
     // Transactions du mois courant
     const achatsduMois = toutesTransactions.filter(
@@ -53,10 +53,10 @@ export async function GET(req: NextRequest) {
     const indicesConnus = [...new Set(toutesTransactions.map((t) => t.action))]
 
     // Prix enregistrés pour ce mois
-    const prixDuMois = await PrixMensuel.find({
+    const prixDuMois = (await PrixMensuel.find({
       userId: userObjectId,
       mois: debut,
-    })
+    })) as any[]
 
     // Map indice -> prix actuel ce mois
     const prixMap = new Map<string, number>()
