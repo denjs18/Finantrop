@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     // Pour les indices sans prix ce mois, chercher le dernier prix connu
     const indicesSansPrix = indicesConnus.filter((i) => !prixMap.has(i))
     if (indicesSansPrix.length > 0) {
-      const derniersConnus = await PrixMensuel.aggregate<{ _id: string; prix: number }>([
+      const derniersConnus = (await PrixMensuel.aggregate([
         {
           $match: {
             userId: userObjectId,
@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
         },
         { $sort: { mois: -1 } },
         { $group: { _id: '$indice', prix: { $first: '$prix' } } },
-      ])
+      ])) as { _id: string; prix: number }[]
       for (const d of derniersConnus) {
         prixMap.set(d._id, d.prix)
       }

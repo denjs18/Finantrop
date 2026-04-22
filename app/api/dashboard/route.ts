@@ -29,11 +29,11 @@ export async function GET(req: NextRequest) {
     ])
 
     // Dernier prix connu par indice via agrégation
-    const derniersKonnus = await PrixMensuel.aggregate<{ _id: string; prix: number }>([
+    const derniersKonnus = (await PrixMensuel.aggregate([
       { $match: { userId } },
       { $sort: { mois: -1 } },
       { $group: { _id: '$indice', prix: { $first: '$prix' } } },
-    ])
+    ])) as { _id: string; prix: number }[]
     const prixMap = new Map<string, number>(derniersKonnus.map((d) => [d._id, d.prix]))
 
     // Quantité totale par indice
