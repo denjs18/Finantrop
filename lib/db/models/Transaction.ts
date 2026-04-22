@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose'
+import { IS_MEMORY_MODE, MemoryCollection } from '@/lib/db/memoryDb'
 
 export interface ITransaction extends mongoose.Document {
   userId: mongoose.Types.ObjectId
@@ -11,45 +12,19 @@ export interface ITransaction extends mongoose.Document {
 }
 
 const TransactionSchema = new Schema<ITransaction>({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  date: {
-    type: Date,
-    required: true,
-  },
-  type: {
-    type: String,
-    required: true,
-    enum: ['achat', 'vente'],
-  },
-  action: {
-    type: String,
-    required: true,
-  },
-  quantite: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  prix: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  frais: {
-    type: Number,
-    default: 0,
-    min: 0,
-  },
-}, {
-  timestamps: true,
-})
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  date: { type: Date, required: true },
+  type: { type: String, required: true, enum: ['achat', 'vente'] },
+  action: { type: String, required: true },
+  quantite: { type: Number, required: true, min: 0 },
+  prix: { type: Number, required: true, min: 0 },
+  frais: { type: Number, default: 0, min: 0 },
+}, { timestamps: true })
 
 TransactionSchema.index({ userId: 1, date: -1 })
 
-const Transaction: Model<ITransaction> = mongoose.models.Transaction || mongoose.model<ITransaction>('Transaction', TransactionSchema)
+const Transaction: any = IS_MEMORY_MODE
+  ? new MemoryCollection('transactions')
+  : (mongoose.models.Transaction || mongoose.model<ITransaction>('Transaction', TransactionSchema))
 
 export default Transaction

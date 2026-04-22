@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getSession } from '@/lib/session'
 import mongoose from 'mongoose'
-import { authOptions } from '@/lib/auth'
 import dbConnect from '@/lib/db/mongodb'
+import { IS_MEMORY_MODE } from '@/lib/db/memoryDb'
 import Transaction from '@/lib/db/models/Transaction'
 import PrixMensuel from '@/lib/db/models/PrixMensuel'
 import Settings from '@/lib/db/models/Settings'
@@ -11,7 +11,7 @@ import MoisRecap from '@/lib/db/models/MoisRecap'
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
@@ -19,7 +19,9 @@ export async function GET(req: NextRequest) {
 
     await dbConnect()
 
-    const userId = new mongoose.Types.ObjectId(session.user.id)
+    const userId = IS_MEMORY_MODE
+      ? session.user.id
+      : new mongoose.Types.ObjectId(session.user.id)
 
     const [transactions, settings] = await Promise.all([
       Transaction.find({ userId, type: 'achat' }),

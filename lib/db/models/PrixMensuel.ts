@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose'
+import { IS_MEMORY_MODE, MemoryCollection } from '@/lib/db/memoryDb'
 
 export interface IPrixMensuel extends mongoose.Document {
   userId: mongoose.Types.ObjectId
@@ -32,6 +33,8 @@ const PrixMensuelSchema = new Schema<IPrixMensuel>({
 
 PrixMensuelSchema.index({ userId: 1, indice: 1, mois: 1 }, { unique: true })
 
-const PrixMensuel: Model<IPrixMensuel> = mongoose.models.PrixMensuel || mongoose.model<IPrixMensuel>('PrixMensuel', PrixMensuelSchema)
+const PrixMensuel: any = IS_MEMORY_MODE
+  ? new MemoryCollection('prix_mensuel')
+  : (mongoose.models.PrixMensuel || mongoose.model<IPrixMensuel>('PrixMensuel', PrixMensuelSchema))
 
 export default PrixMensuel

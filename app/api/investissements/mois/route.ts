@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { getSession } from '@/lib/session'
 import mongoose from 'mongoose'
-import { authOptions } from '@/lib/auth'
 import dbConnect from '@/lib/db/mongodb'
 import Transaction from '@/lib/db/models/Transaction'
 import PrixMensuel from '@/lib/db/models/PrixMensuel'
+import { IS_MEMORY_MODE } from '@/lib/db/memoryDb'
 
 function debutMois(moisStr: string): Date {
   const [annee, mois] = moisStr.split('-').map(Number)
@@ -18,7 +18,7 @@ function finMois(moisStr: string): Date {
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
@@ -31,7 +31,9 @@ export async function GET(req: NextRequest) {
 
     const debut = debutMois(moisStr)
     const fin = finMois(moisStr)
-    const userObjectId = new mongoose.Types.ObjectId(session.user.id)
+    const userObjectId = IS_MEMORY_MODE
+      ? session.user.id
+      : new mongoose.Types.ObjectId(session.user.id)
 
     await dbConnect()
 

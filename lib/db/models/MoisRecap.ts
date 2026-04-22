@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose'
+import { IS_MEMORY_MODE, MemoryCollection } from '@/lib/db/memoryDb'
 
 export interface IMoisRecap extends mongoose.Document {
   userId: mongoose.Types.ObjectId
@@ -55,6 +56,8 @@ const MoisRecapSchema = new Schema<IMoisRecap>({
 
 MoisRecapSchema.index({ userId: 1, mois: 1, annee: 1 }, { unique: true })
 
-const MoisRecap: Model<IMoisRecap> = mongoose.models.MoisRecap || mongoose.model<IMoisRecap>('MoisRecap', MoisRecapSchema)
+const MoisRecap: any = IS_MEMORY_MODE
+  ? new MemoryCollection('mois_recaps')
+  : (mongoose.models.MoisRecap || mongoose.model<IMoisRecap>('MoisRecap', MoisRecapSchema))
 
 export default MoisRecap

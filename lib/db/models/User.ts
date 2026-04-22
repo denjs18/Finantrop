@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose'
+import { IS_MEMORY_MODE, MemoryCollection } from '@/lib/db/memoryDb'
 
 export interface IUser extends mongoose.Document {
   email: string
@@ -30,6 +31,8 @@ const UserSchema = new Schema<IUser>({
   },
 })
 
-const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', UserSchema)
+const User: any = IS_MEMORY_MODE
+  ? new MemoryCollection('users')
+  : (mongoose.models.User || mongoose.model<IUser>('User', UserSchema))
 
 export default User

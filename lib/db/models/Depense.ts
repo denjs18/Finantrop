@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose'
+import { IS_MEMORY_MODE, MemoryCollection } from '@/lib/db/memoryDb'
 
 export interface IDepense extends mongoose.Document {
   userId: mongoose.Types.ObjectId
@@ -47,6 +48,8 @@ const DepenseSchema = new Schema<IDepense>({
 
 DepenseSchema.index({ userId: 1, date: -1 })
 
-const Depense: Model<IDepense> = mongoose.models.Depense || mongoose.model<IDepense>('Depense', DepenseSchema)
+const Depense: any = IS_MEMORY_MODE
+  ? new MemoryCollection('depenses')
+  : (mongoose.models.Depense || mongoose.model<IDepense>('Depense', DepenseSchema))
 
 export default Depense

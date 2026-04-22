@@ -1,4 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose'
+import { IS_MEMORY_MODE, MemoryCollection } from '@/lib/db/memoryDb'
 
 export interface ISettings extends mongoose.Document {
   userId: mongoose.Types.ObjectId
@@ -38,6 +39,8 @@ const SettingsSchema = new Schema<ISettings>({
   timestamps: true,
 })
 
-const Settings: Model<ISettings> = mongoose.models.Settings || mongoose.model<ISettings>('Settings', SettingsSchema)
+const Settings: any = IS_MEMORY_MODE
+  ? new MemoryCollection('settings')
+  : (mongoose.models.Settings || mongoose.model<ISettings>('Settings', SettingsSchema))
 
 export default Settings
