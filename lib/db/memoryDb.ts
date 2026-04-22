@@ -28,7 +28,7 @@ function matchValue(docVal: any, filterVal: any): boolean {
   if (filterVal !== null && typeof filterVal === 'object' && !Array.isArray(filterVal)) {
     for (const [op, opVal] of Object.entries(filterVal)) {
       const dv = docVal instanceof Date ? docVal.getTime() : docVal
-      const ov = opVal instanceof Date ? (opVal as Date).getTime() : opVal
+      const ov: any = opVal instanceof Date ? (opVal as Date).getTime() : opVal
       switch (op) {
         case '$lt':  if (!(dv <  ov)) return false; break
         case '$lte': if (!(dv <= ov)) return false; break
