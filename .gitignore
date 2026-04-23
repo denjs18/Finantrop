@@ -32,6 +32,6 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
-stock-analyzer/__pycache__
-stock-analyzer/backend/__pycache__
+stock-analyzer/**/__pycache__
+stock-analyzer/**/*.pyc
 stock-analyzer/*.db
