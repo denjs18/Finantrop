@@ -84,7 +84,41 @@ export interface RecapMois {
   valeurTotale: number | null
 }
 
-export interface MoisRecap {
+export interface VersementPEG {
+  _id: string
+  userId: string
+  date: Date
+  indice: string
+  montant: number
+}
+
+export interface ValeurPEG {
+  _id: string
+  userId: string
+  indice: string
+  mois: Date
+  valeur: number
+}
+
+export interface RecapIndicePEG {
+  indice: string
+  verseCeMois: number
+  verseTotal: number
+  valeurActuelle: number | null
+  performance: number | null
+}
+
+export interface RecapMoisPEG {
+  mois: string
+  versements: VersementPEG[]
+  valeurs: ValeurPEG[]
+  recap: RecapIndicePEG[]
+  totalVerseCeMois: number
+  totalVerseDepuisDebut: number
+  valeurTotale: number | null
+  performanceGlobale: number | null
+  indicesConnus: string[]
+}
   _id?: string
   userId: string
   mois: number

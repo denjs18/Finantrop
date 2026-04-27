@@ -9,7 +9,8 @@ import {
   TrendingUp,
   LineChart,
   History,
-  LogOut
+  LogOut,
+  PiggyBank
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -40,6 +41,11 @@ const routes = [
     href: '/historique',
     label: 'Historique',
     icon: History,
+  },
+  {
+    href: '/peg',
+    label: 'PEG',
+    icon: PiggyBank,
   },
 ]
 
