@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
-const PROTECTED = ['/dashboard', '/budget', '/investissements', '/projections', '/historique', '/peg']
+const PROTECTED = ['/dashboard', '/budget', '/investissements', '/projections', '/historique', '/peg', '/crypto']
 
 export async function middleware(req: NextRequest) {
   // Memory mode: skip auth entirely so the app works without env vars
@@ -25,5 +25,6 @@ export const config = {
     '/projections/:path*',
     '/historique/:path*',
     '/peg/:path*',
+    '/crypto/:path*',
   ],
 }

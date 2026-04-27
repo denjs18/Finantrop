@@ -10,7 +10,8 @@ import {
   LineChart,
   History,
   LogOut,
-  PiggyBank
+  PiggyBank,
+  Bitcoin
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -46,6 +47,11 @@ const routes = [
     href: '/peg',
     label: 'PEG',
     icon: PiggyBank,
+  },
+  {
+    href: '/crypto',
+    label: 'Crypto',
+    icon: Bitcoin,
   },
 ]
 

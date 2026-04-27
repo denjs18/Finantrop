@@ -119,6 +119,7 @@ export interface RecapMoisPEG {
   performanceGlobale: number | null
   indicesConnus: string[]
 }
+export interface MoisRecap {
   _id?: string
   userId: string
   mois: number
@@ -128,6 +129,33 @@ export interface RecapMoisPEG {
   epargneBourse: number
   epargneLivrets: number
   reste: number
+}
+
+export interface AchatCrypto {
+  _id: string
+  userId: string
+  mois: Date
+  crypto: string
+  montant: number
+  prix: number
+}
+
+export interface PrixCrypto {
+  _id: string
+  userId: string
+  crypto: string
+  mois: Date
+  prix: number
+}
+
+export interface RecapCrypto {
+  crypto: string
+  investiCeMois: number
+  investiTotal: number
+  quantiteTotale: number
+  prixActuel: number | null
+  valeurActuelle: number | null
+  performance: number | null
 }
 
 export interface Settings {
